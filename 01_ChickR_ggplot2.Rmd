@@ -1,0 +1,62 @@
+---
+title: "ChickR - ggplot2"
+author: "S Bashir (ilustat.com)"
+date: "26 October 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ChickR
+
+Welcome to ChickR
+
+### Setup
+
+It is assumed that the latest version of [R](www.r-project.og) is installed on your computer. It is recommended that you install and use [Rstudio IDE](https://www.rstudio.com/products/rstudio/) (integrated development environment) for the ChickR series. Other IDEs should work fine. The first step is to install some packages (*addons*/*apps*) by typing the following in the console:
+```{r tidyverse, echo=TRUE, eval=FALSE}
+install.packages("tidyverse")
+```
+It could take some time to download and install. Without going into details, we next need to *active* some of these packages as we will be using them without directly realising. So please type the following in the console:
+```{r libraries, message=FALSE, results='hide'}
+library(dplyr)
+library(ggplot2)
+```
+
+### ChickWeight Data
+
+The `ChickWeight` data is one of the many datasets included as part of R. The data are from a weight gain experiment for chicks. We will start by loading the data and looking at it.
+```{r ChickWeightData}
+data("ChickWeight")
+glimpse(ChickWeight)
+```
+We can see that there are 4 variables and 578 observations. Each chick in the experiment is uniquely identified by the `Chick` variable (**R is case sensitive**) and they are randomly assigned to be fed one of four diets (`Diet`). Their `weight` (in grams) is measured over `Time` (from day zero to day 21). 
+
+### ChickWeight Objective
+
+Our objective is to investigate the effect of diet on the chieck weights over time. 
+
+### Graphical Exploration
+
+We will start by looking the data graphically using the `ggplot2` package. Don't worry too much about the details of the commands just try to build your own understanding.
+```{r ggplot01}
+ggplot(ChickWeight, aes(Time, weight)) + geom_point()
+```
+We see that generally the chick weights increase over time but what is the effect of diet?
+```{r ggplot02}
+ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_point()
+```
+It is hard to make out the effect of the diet as there are many overlapping points.
+```{r ggplot03}
+ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_jitter()
+```
+This looks like four hives of bees spreading out so still not easy to see what the effect of diet.
+```{r ggplot04}
+ggplot(ChickWeight, aes(Time, weight)) + geom_point() + facet_wrap(~Diet)
+```
+Perhaps it will look better with a bit of colour
+```{r ggplot05}
+ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_point() + facet_wrap(~Diet)
+```
