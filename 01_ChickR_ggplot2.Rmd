@@ -1,15 +1,17 @@
 ---
 title: "ChickR - ggplot2"
 author: "S Bashir (ilustat.com)"
-date: "`r format(Sys.time(), '%d %B %Y')`"
-output: html_document
+date: '`r format(Sys.time(), "%d %B %Y")`'
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 library(svglite)
 knitr::opts_chunk$set(
-  echo = TRUE,
-  dev = "svglite"
+  echo = TRUE
+#  ,dev = "svglite"
 )
 ```
 
@@ -83,12 +85,14 @@ ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_point() + facet_wra
 
 We don't need to have a legend as the `Diet` number is already given at the top of each plot so we can remove it. 
 ```{r ggplot05a}
-ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_point(show.legend = FALSE) + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_point(show.legend = FALSE) + 
+  facet_wrap(~Diet)
 ```
 
 Perhaps it could help to identify each chick using a differenct colour.
 ```{r ggplot06}
-ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_point() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_point() + 
+  facet_wrap(~Diet)
 ```
 
 It sort of helps but there is still a lot of information to process and knowing the chick number for each colour does not really enhance understand so we can remove the legend. 
@@ -104,23 +108,27 @@ ggplot(ChickWeight, aes(Time, weight)) + geom_line() + facet_wrap(~Diet)
 ```
 Whoops it is not what we expected. We want one line for each chick. Let's try again.
 ```{r ggplot08}
-ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line() + 
+  facet_wrap(~Diet)
 ```
 
 This is better but we will remove the legend.
 ```{r ggplot09}
-ggplot(ChickWeight, aes(Time, weight, group = Chick)) + geom_line() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, group = Chick)) + geom_line() + 
+  facet_wrap(~Diet)
 ```
 
 Oh... but now we've lost the colours. 
 ```{r ggplot10}
-ggplot(ChickWeight, aes(Time, weight, group = Chick, colour=Chick)) + geom_line() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, group = Chick, colour=Chick)) + geom_line() + 
+  facet_wrap(~Diet)
 ```
 
 Perhaps the aesthetics (`aes`) need to be in the `geom_line` part.
 
 ```{r ggplot11}
-ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(group = Chick, colour=Chick)) + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(group = Chick, colour=Chick)) + 
+  facet_wrap(~Diet)
 ```
 
 Black and white again but no legend. Yay. Let's upgrade to colour.
@@ -131,52 +139,63 @@ ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick)) + facet_
 What is going on??? Colour but the legend is back. Mixing `colour` and `group` in `geom_line`.
 
 ```{r ggplot14}
-ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + 
+  facet_wrap(~Diet)
 ```
 This gives us a better idea of how each chick performs. We also notice that some chicks don't have measurement up to day 21 (e.g. for diet 1 there is a chick who does not have measurements after day 12). Perhaps if we add points it will be clearer.
 ```{r ggplot15}
-ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + geom_point() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + 
+  geom_point() + facet_wrap(~Diet)
 ```
 
 The points should be the same colour as the lines so 
 ```{r ggplot16}
-ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + geom_point(aes(colour = Chick)) + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight)) + geom_line(aes(colour = Chick), show.legend = FALSE) + 
+  geom_point(aes(colour = Chick)) + facet_wrap(~Diet)
 ```
 
 There are two problems here, the legend is back and the duplication of `aes(colour = Chick)`. Let's move it back to the `aes` in the `ggplot` part.
 ```{r ggplot17}
-ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line() + geom_point() + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line() + geom_point() + 
+  facet_wrap(~Diet)
 ```
 
 Removing the legend yet again!
 ```{r ggplot18}
-ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line(show.legend = FALSE) + geom_point(show.legend = FALSE) + facet_wrap(~Diet)
+ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE) + facet_wrap(~Diet)
 ```
 This plot looks good enough for our initial assessments. Chicks gain weight over time for each of the diets. It seems although diet 4 has less variabilty than the others. Diet 3 could be the one that has the most weight gain over time but we would need to investigate the data further using summary statistics and some statistical modelling to confirm that.
 
 What do they look like in one graph (by removing `facet_wrap`).
 ```{r ggplot19}
-ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line(show.legend = FALSE) + geom_point(show.legend = FALSE)
+ggplot(ChickWeight, aes(Time, weight, colour = Chick)) + geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE)
 ```
 
 A spaghetti mess that does not tell us anything about the `diet`. Using `Diet` for `colour` instead of `Chick`.
 ```{r ggplot20}
-ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_line(show.legend = FALSE) + geom_point(show.legend = FALSE)
+ggplot(ChickWeight, aes(Time, weight, colour = Diet)) + geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE)
 ```
 
 Not what was hoped for. Bring back the `Chick` variable to identify the unique lines and use `Diet` as the colour.
 ```{r ggplot21}
-ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + geom_line(show.legend = FALSE) + geom_point(show.legend = FALSE)
+ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + 
+  geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE)
 ```
 
 As the colour coding is diet it makes sense to bring back the legend by removing both `show.legend = FALSE`
 ```{r ggplot22}
-ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + geom_line() + geom_point()
+ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + 
+  geom_line() + geom_point()
 ```
 
 Move the legend to the bottom of the graph.
 ```{r ggplot23}
-ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + geom_line() + geom_point() + theme(legend.position = "bottom")
+ggplot(ChickWeight, aes(Time, weight, colour = Diet, group=Chick)) + geom_line() + 
+  geom_point() + theme(legend.position = "bottom")
 ```
 
 
